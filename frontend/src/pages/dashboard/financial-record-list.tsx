@@ -3,7 +3,7 @@ import {
   FinancialRecord,
   useFinancialRecords,
 } from "../../contexts/financial-record-context";
-import { useTable, Column, CellProps, Row } from "react-table";
+import { useTable, Column, CellProps } from "react-table";
 
 interface EditableCellProps extends CellProps<FinancialRecord> {
   updateRecord: (rowIndex: number, columnId: string, value: any) => void;
@@ -125,7 +125,7 @@ export const FinancialRecordList = () => {
         ),
       },
     ],
-    [records]
+    [] // Update if necessary
   );
 
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
@@ -133,25 +133,30 @@ export const FinancialRecordList = () => {
       columns,
       data: records,
     });
+
   return (
     <div className="table-container">
       <table {...getTableProps()} className="table">
         <thead>
           {headerGroups.map((hg) => (
-            <tr {...hg.getHeaderGroupProps()}>
+            <tr {...hg.getHeaderGroupProps()} key={hg.id}>
               {hg.headers.map((column) => (
-                <th {...column.getHeaderProps()}> {column.render("Header")}</th>
+                <th {...column.getHeaderProps()} key={column.id}>
+                  {column.render("Header")}
+                </th>
               ))}
             </tr>
           ))}
         </thead>
         <tbody {...getTableBodyProps()}>
-          {rows.map((row, idx) => {
+          {rows.map((row) => {
             prepareRow(row);
             return (
-              <tr {...row.getRowProps()}>
+              <tr {...row.getRowProps()} key={row.id}>
                 {row.cells.map((cell) => (
-                  <td {...cell.getCellProps()}> {cell.render("Cell")} </td>
+                  <td {...cell.getCellProps()} key={cell.column.id}>
+                    {cell.render("Cell")}
+                  </td>
                 ))}
               </tr>
             );
